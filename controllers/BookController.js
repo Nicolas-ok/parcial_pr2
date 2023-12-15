@@ -25,6 +25,7 @@ class BookController {
     }
   };
 
+
   // Endpoint: Listar todos los libros ingresados
   getAll = async (req, res) => {
     try {

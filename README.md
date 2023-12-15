@@ -5,6 +5,7 @@ Este proyecto implementa un sistema de alquiler de libros diseñado para una bib
 - Ingresar libros existentes para su alquiler.
 - Listar los libros ingresados en forma general y particular.
 - Eliminar un libro del sistema.
+- Listar un libro en particular segun su código.
 
 ## Requerimientos del Sistema
 
@@ -42,4 +43,8 @@ Este proyecto es parte del taller de Programación 2 y cubre los fundamentos de 
    - **Ruta:** `/api/books/ABC123`
    - **Descripción:** Da de baja el libro con código "ABC123" de la biblioteca.
 
+5. **Listar un Libro en Particular por su Código:**
+   - **Método:** GET
+   - **Ruta:** `/api/books/:code`
+   - **Descripción:** Obtiene un libro en particular por su código.
 

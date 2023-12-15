@@ -15,6 +15,8 @@ healthCheckRouter.get("/health", (req, res) => {
   res.status(200).send("Server is healthy");
 });
 
+bookRoutes.get("/", bookController.getAll2);
+
 // Endpoint: Dar de alta un libro
 bookRoutes.post("/", bookController.create);
 
