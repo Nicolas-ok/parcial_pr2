@@ -5,68 +5,51 @@ class BookController {
     this.libraryApi = new LibraryApi();
   }
 
-  // Endpoint: Dar de alta un libro
-  create = async (req, res) => {
+  // Manejo genérico de las operaciones del controlador
+  handleOperation = async (operation, req, res) => {
     try {
-      const { code, title, author } = req.body;
-
-      // Validación de datos
-      if (!code || !title || !author) {
-        throw new Error("Código, título y autor son campos obligatorios");
-      }
-
-      // Llama a la función para dar de alta un libro en la biblioteca
-      const newBook = await this.libraryApi.createBook({ code, title, author });
-
-      // Responde con el libro dado de alta
-      res.status(201).send({ book: newBook, message: "Libro dado de alta exitosamente" });
+      await operation(req, res);
     } catch (error) {
       res.status(422).send({ message: error.message });
     }
   };
 
+  // Endpoint: Dar de alta un libro
+  create = async (req, res) => {
+    const { code, title, author } = req.body;
+
+    await this.handleOperation(async () => {
+      const newBook = await this.libraryApi.createBook({ code, title, author });
+      res.status(201).send({ book: newBook, message: "Libro dado de alta exitosamente" });
+    }, req, res);
+  };
 
   // Endpoint: Listar todos los libros ingresados
   getAll = async (req, res) => {
-    try {
-      // Llama a la función para obtener todos los libros en la biblioteca
+    await this.handleOperation(async () => {
       const allBooks = await this.libraryApi.getAllBooks();
-
-      // Responde con la lista de libros
       res.status(200).send({ books: allBooks, message: "Lista de libros obtenida exitosamente" });
-    } catch (error) {
-      res.status(422).send({ message: error.message });
-    }
+    }, req, res);
   };
 
   // Endpoint: Dar de baja un libro por su código
   deleteByCode = async (req, res) => {
-    try {
-      const { code } = req.params;
+    const { code } = req.params;
 
-      // Llama a la función para dar de baja un libro por su código
+    await this.handleOperation(async () => {
       const deletedBook = await this.libraryApi.deleteBookByCode(code);
-
-      // Responde con el libro dado de baja
       res.status(200).send({ book: deletedBook, message: "Libro dado de baja exitosamente" });
-    } catch (error) {
-      res.status(422).send({ message: error.message });
-    }
+    }, req, res);
   };
 
   // Endpoint: Listar un libro en particular por su código
   getByCode = async (req, res) => {
-    try {
-      const { code } = req.params;
+    const { code } = req.params;
 
-      // Llama a la función para obtener un libro por su código
+    await this.handleOperation(async () => {
       const book = await this.libraryApi.getBookByCode(code);
-
-      // Responde con el libro encontrado
       res.status(200).send({ book, message: "Libro obtenido exitosamente" });
-    } catch (error) {
-      res.status(422).send({ message: error.message });
-    }
+    }, req, res);
   };
 }
 

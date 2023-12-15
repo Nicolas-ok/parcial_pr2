@@ -6,12 +6,33 @@ class LibraryApi {
     this.factory = Factory.factory(MODO);
   }
 
+  // Método privado para validar cadenas de texto
+  isValidString = (value) => /^[a-zA-Z0-9\s]+$/.test(value);
+
+  // Método privado para validar la existencia de un libro por código
+  isBookExist = async (code) => {
+    try {
+      const allBooks = await this.getAllBooks();
+      return allBooks.some((book) => book.code === code);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // Función para dar de alta un libro en la biblioteca
   createBook = async ({ code, title, author }) => {
     try {
-      // Validar la información del libro
-      if (!code || !title || !author) {
-        throw new Error("Código, título y autor son campos obligatorios");
+      // Validar que el código no esté duplicado
+      if (await this.isBookExist(code)) {
+        throw new Error("Ya existe un libro con ese código");
+      }
+
+      // Validar que los datos no contengan caracteres especiales
+      const validTitle = this.isValidString(title);
+      const validAuthor = this.isValidString(author);
+
+      if (!validTitle || !validAuthor) {
+        throw new Error("Los datos contienen caracteres no permitidos");
       }
 
       // Llama al DAO correspondiente para dar de alta el libro
@@ -36,6 +57,11 @@ class LibraryApi {
   // Función para dar de baja un libro por su código
   deleteBookByCode = async (code) => {
     try {
+      // Validar que el libro exista antes de intentar darlo de baja
+      if (!(await this.isBookExist(code))) {
+        throw new Error("Libro no encontrado");
+      }
+
       // Llama al DAO correspondiente para dar de baja el libro por su código
       const deletedBook = await this.factory.libraryDao.deleteBookByCode(code);
       return deletedBook;
@@ -47,8 +73,12 @@ class LibraryApi {
   // Función para obtener un libro por su código
   getBookByCode = async (code) => {
     try {
-      // Llama al DAO correspondiente para obtener el libro por su código
+      // Validar que el libro exista antes de intentar obtenerlo
       const book = await this.factory.libraryDao.getBookByCode(code);
+      if (!book) {
+        throw new Error("Libro no encontrado");
+      }
+
       return book;
     } catch (error) {
       throw error;

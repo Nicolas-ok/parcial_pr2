@@ -26,13 +26,15 @@ class LibraryMemoryDao {
   // Función para dar de baja un libro por su código
   deleteBookByCode = async (code) => {
     try {
-      const bookIndex = this.memory.findIndex((book) => book.code === code);
-      if (bookIndex === -1) {
+      // Validar que el libro exista antes de intentar darlo de baja
+      if (!this.isBookExist(code)) {
         throw new Error("Libro no encontrado");
       }
 
-      const deletedBook = this.memory.splice(bookIndex, 1)[0];
-      return deletedBook;
+      // Filtrar la colección para mantener solo los libros que no coinciden con el código
+      this.memory = this.memory.filter((book) => book.code !== code);
+
+      return { message: "Libro dado de baja exitosamente" };
     } catch (error) {
       throw error;
     }
@@ -41,6 +43,7 @@ class LibraryMemoryDao {
   // Función para obtener un libro por su código
   getBookByCode = async (code) => {
     try {
+      // Validar que el libro exista antes de intentar obtenerlo
       const book = this.memory.find((book) => book.code === code);
       if (!book) {
         throw new Error("Libro no encontrado");
@@ -51,8 +54,6 @@ class LibraryMemoryDao {
       throw error;
     }
   };
-
-
 }
 
 export default LibraryMemoryDao;
