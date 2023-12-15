@@ -1,7 +1,8 @@
 import { Router } from "express";
-import xRoutes from "./xRoutes.js";
+import bookRoutes from "./bookRoutes.js";
 
-const router= Router()
-router.use("/x", xRoutes)
+const router = Router();
 
-export default router
+router.use("/books", bookRoutes);
+
+export default router;
